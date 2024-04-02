@@ -17,8 +17,6 @@ jobs:
       - name: Get Tag Name
         id: tag_name
         run: |
-          git describe --tags --candidates 1
-          git describe --tags --always $(git rev-list --tags --max-count=1)
           echo "tag_name=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
   print_tag_name:
     runs-on: ubuntu-latest
@@ -26,4 +24,4 @@ jobs:
     steps:
       - name: Print Tag Name
         run: |
-          echo "Tag Name: ${{ needs.deploy.outputs.tag_name }}"
+          echo "Tag Name: ${{ needs.deploy.outputs.output1 }}"
