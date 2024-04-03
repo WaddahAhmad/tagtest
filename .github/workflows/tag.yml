@@ -35,8 +35,10 @@ jobs:
     - name: bump_tag
       run: |
         old_tag=${{ needs.deploy.outputs.output1 }}
+        echo $old_tag
         version=$(echo $old_tag | sed 's/v//')
         incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+        echo $incremented_version
         incremented_tag="v${incremented_version}"
         echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
         
@@ -51,6 +53,7 @@ jobs:
         run: git tag ${{needs.bump_tag.outputs.tag}}
       - name: Commit report
         run: |
+          echo ${{needs.bump_tag.outputs.tag}}
           git config --global user.name 'waddah'
           git config --global user.email 'waddah.t.ahmad@gmail.com'
           git push origin ${{needs.bump_tag.outputs.tag}}
