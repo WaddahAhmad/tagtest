@@ -1,11 +1,5 @@
 name: Bump version
 on:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   types: [closed]
-
   workflow_dispatch:
     inputs:
       upgrade_level:
@@ -18,54 +12,36 @@ on:
         - major
 
 jobs:
-  deploy:
+
+  extract_tag:
     runs-on: ubuntu-latest
     outputs:
-      output1: ${{ steps.tag_name.outputs.tag_name }}
+      old_tag: ${{ steps.old_tag.outputs.old_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-tags: 'true'
           fetch-depth: '0'
-      - name: Get Tag Name
-        id: tag_name
+          
+      - name: Get Old Tag
+        id: old_tag
         run: |
-          echo "tag_name=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
-  print_tag_name:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - name: Print Tag Name
-        run: |
-          echo "Tag Name: ${{ needs.deploy.outputs.output1 }}"
-
+          echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
+          
   bump_tag:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: extract_tag
     outputs:
       final_tag: ${{steps.bump_tag.outputs.tag}}
     steps:
     - name: bump_tag
       id: bump_tag
       run: |
-        # old_tag=${{ needs.deploy.outputs.output1 }}
-        # echo $old_tag
-        # echo ${{ inputs.upgrade_level }} 
-        # version=$(echo $old_tag | sed 's/v//')
-        # incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
-        # echo $incremented_version
-        # incremented_tag="v${incremented_version}"
-        # echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
-        ###########################################
-        old_tag=${{ needs.deploy.outputs.output1 }}
+        old_tag=${{ needs.extract_tag.outputs.old_tag }}
         echo $old_tag
         echo ${{ inputs.upgrade_level }} 
-    
-        # Extract version number without the 'v' prefix
         version=$(echo $old_tag | sed 's/v//')
-    
-        # Increment the version based on the upgrade level
         case ${{ inputs.upgrade_level }} in
           "patch")
             incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
@@ -81,10 +57,9 @@ jobs:
             exit 1
             ;;
         esac
-    
-        # Construct the new tag with the incremented version
         incremented_tag="v${incremented_version}"
         echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
+        
   push_tag_name:
     runs-on: ubuntu-latest
     needs: bump_tag
@@ -96,7 +71,6 @@ jobs:
         run: git tag ${{needs.bump_tag.outputs.final_tag}}
       - name: Commit report
         run: |
-          echo ${{needs.bump_tag.outputs.final_tag}}
           git config --global user.name 'waddah'
           git config --global user.email 'waddah.t.ahmad@gmail.com'
           git push origin ${{needs.bump_tag.outputs.final_tag}}
