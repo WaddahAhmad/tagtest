@@ -50,10 +50,10 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: Create version
-        run: git tag ${{needs.bump_tag.outputs.tag}}
+        run: git tag ${{needs.bump_tag.outputs.final_tag}}
       - name: Commit report
         run: |
-          echo ${{needs.bump_tag.outputs.tag}}
+          echo ${{needs.bump_tag.outputs.final_tag}}
           git config --global user.name 'waddah'
           git config --global user.email 'waddah.t.ahmad@gmail.com'
-          git push origin ${{needs.bump_tag.outputs.tag}}
+          git push origin ${{needs.bump_tag.outputs.final_tag}}
