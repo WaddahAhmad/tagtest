@@ -28,6 +28,7 @@ jobs:
 
   bump_tag:
     runs-on: ubuntu-latest
+    needs: deploy
     outputs:
       final_tag: ${{steps.bump_tag.outputs.tag}}
     steps:
