@@ -13,35 +13,21 @@ on:
 
 jobs:
 
-  extract_tag:
-    runs-on: ubuntu-latest
-    outputs:
-      old_tag: ${{ steps.old_tag.outputs.old_tag }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-tags: 'true'
-          fetch-depth: '0'
-          
-      - name: Get Old Tag
-        id: old_tag
-        run: |
-          echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
-          
   bump_tag:
     runs-on: ubuntu-latest
-    needs: extract_tag
     outputs:
       final_tag: ${{steps.bump_tag.outputs.tag}}
     steps:
-    - name: bump_tag
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-tags: 'true'
+        fetch-depth: '0'
+        
+    - name: Bump Tag
       id: bump_tag
       run: |
-        old_tag=${{ needs.extract_tag.outputs.old_tag }}
-        echo $old_tag
-        echo ${{ inputs.upgrade_level }} 
-        version=$(echo $old_tag | sed 's/v//')
+        old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1)) | sed 's/v//'
         case ${{ inputs.upgrade_level }} in
           "patch")
             incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
