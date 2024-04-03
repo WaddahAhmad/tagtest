@@ -25,6 +25,20 @@ jobs:
       - name: Print Tag Name
         run: |
           echo "Tag Name: ${{ needs.deploy.outputs.output1 }}"
+
+  bump_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      final_tag: ${{steps.bump_tag.outputs.tag}}
+    steps:
+    - name: bump_tag
+      run: |
+        old_tag=${{ needs.deploy.outputs.output1 }}
+        version=$(echo $old_tag | sed 's/v//')
+        incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+        incremented_tag="v${incremented_version}"
+        echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
+        
   push_tag_name:
     runs-on: ubuntu-latest
     needs: deploy
@@ -33,9 +47,9 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: Create version
-        run: git tag v00.32.2
+        run: git tag ${{needs.bump_tag.outputs.tag}}
       - name: Commit report
         run: |
           git config --global user.name 'waddah'
           git config --global user.email 'waddah.t.ahmad@gmail.com'
-          git push origin v00.32.2
+          git push origin ${{needs.bump_tag.outputs.tag}}
