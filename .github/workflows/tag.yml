@@ -33,6 +33,7 @@ jobs:
       final_tag: ${{steps.bump_tag.outputs.tag}}
     steps:
     - name: bump_tag
+      id: bump_tag
       run: |
         old_tag=${{ needs.deploy.outputs.output1 }}
         echo $old_tag
