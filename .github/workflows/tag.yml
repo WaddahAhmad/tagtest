@@ -27,7 +27,7 @@ jobs:
     - name: Bump Tag
       id: bump_tag
       run: |
-        old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1) | sed 's/v//) '
+        old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1) | sed 's/v//')
         case ${{ inputs.upgrade_level }} in
           "patch")
             incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
