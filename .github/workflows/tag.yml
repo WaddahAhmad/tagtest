@@ -25,3 +25,18 @@ jobs:
       - name: Print Tag Name
         run: |
           echo "Tag Name: ${{ needs.deploy.outputs.output1 }}"
+  push_tag_name:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Print Tag Name
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+      - name: Create version
+        run: git tag v00.32.2
+      - name: Commit report
+        run: |
+          git config --global user.name 'waddah'
+          git config --global user.email 'waddah.t.ahmad@gmail.com'
+          git push origin v00.32.2
