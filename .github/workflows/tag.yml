@@ -1,0 +1,60 @@
+name: Bump version
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.tag_name.outputs.tag_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: 'true'
+          fetch-depth: '0'
+      - name: Get Tag Name
+        id: tag_name
+        run: |
+          echo "tag_name=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
+  print_tag_name:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Print Tag Name
+        run: |
+          echo "Tag Name: ${{ needs.deploy.outputs.output1 }}"
+
+  bump_tag:
+    runs-on: ubuntu-latest
+    needs: deploy
+    outputs:
+      final_tag: ${{steps.bump_tag.outputs.tag}}
+    steps:
+    - name: bump_tag
+      id: bump_tag
+      run: |
+        old_tag=${{ needs.deploy.outputs.output1 }}
+        echo $old_tag
+        version=$(echo $old_tag | sed 's/v//')
+        incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+        echo $incremented_version
+        incremented_tag="v${incremented_version}"
+        echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
+        
+  push_tag_name:
+    runs-on: ubuntu-latest
+    needs: bump_tag
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+      - name: Create version
+        run: git tag ${{needs.bump_tag.outputs.final_tag}}
+      - name: Commit report
+        run: |
+          echo ${{needs.bump_tag.outputs.final_tag}}
+          git config --global user.name 'waddah'
+          git config --global user.email 'waddah.t.ahmad@gmail.com'
+          git push origin ${{needs.bump_tag.outputs.final_tag}}
