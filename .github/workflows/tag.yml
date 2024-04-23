@@ -27,7 +27,7 @@ jobs:
       - name: Get Old Tag
         id: old_tag
         run: |
-          ercho "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
+          echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
           
   bump_tag:
     runs-on: ubuntu-latest
@@ -35,30 +35,30 @@ jobs:
     outputs:
       final_tag: ${{steps.bump_tag.outputs.tag}}
     steps:
-    - name: bump_tag
-      id: bump_tag
-      run: |
-        old_tag=${{ needs.extract_tag.outputs.old_tag }}
-        echo $old_tag
-        echo ${{ inputs.upgrade_level }} 
-        version=$(echo $old_tag | sed 's/v//')
-        case ${{ inputs.upgrade_level }} in
-          "patch")
-            incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
-            ;;
-          "minor")
-            incremented_version=$(echo $version | awk -F. '{$(NF-1) = $(NF-1) + 1; $NF = 0 } 1' | sed 's/ /./g')
-            ;;
-          "major")
-            incremented_version=$(echo $version | awk -F. '{$(NF-2) = $(NF-2) + 1; $NF = 0; $(NF-1) = 0 } 1' | sed 's/ /./g')
-            ;;
-          *)
-            echo "Invalid upgrade level specified."
-            exit 1
-            ;;
-        esac
-        incremented_tag="v${incremented_version}"
-        echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
+      - name: bump_tag
+        id: bump_tag
+        run: |
+          old_tag=${{ needs.extract_tag.outputs.old_tag }}
+          echo $old_tag
+          echo ${{ inputs.upgrade_level }} 
+          version=$(echo $old_tag | sed 's/v//')
+          case ${{ inputs.upgrade_level }} in
+            "patch")
+              incremented_version=$(echo $version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+              ;;
+            "minor")
+              incremented_version=$(echo $version | awk -F. '{$(NF-1) = $(NF-1) + 1; $NF = 0 } 1' | sed 's/ /./g')
+              ;;
+            "major")
+              incremented_version=$(echo $version | awk -F. '{$(NF-2) = $(NF-2) + 1; $NF = 0; $(NF-1) = 0 } 1' | sed 's/ /./g')
+              ;;
+            *)
+              echo "Invalid upgrade level specified."
+              exit 1
+              ;;
+          esac
+          incremented_tag="v${incremented_version}"
+          echo "tag=${incremented_tag}" >> "$GITHUB_OUTPUT"
         
   push_tag_name:
     runs-on: ubuntu-latest
@@ -74,14 +74,10 @@ jobs:
           git config --global user.name 'waddah'
           git config --global user.email 'waddah.t.ahmad@gmail.com'
           git push origin ${{needs.bump_tag.outputs.final_tag}}
-  trig:
-    runs-on: ubuntu-latest
-    needs: bump_tag
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
-      - name: run workflow
-        uses: ./.github/workflows/notifications
-        with:
-          test: "this"
+          
+      - name: Check Job Status
+        run: |
+          if [[ "${{ job.status }}" != "success" ]]; then
+            echo "One or more jobs in this workflow have failed."
+            exit 1
+          fi
