@@ -1,0 +1,44 @@
+name: Deploy Staging
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        type: string
+        required: false
+        description: kind of update
+        default: that
+        options: 
+        - this
+        - here
+        - that
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: 'true'
+          fetch-depth: '0'
+      - name: test      
+        run: |
+            echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)"
+            echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))"
+            echo  "Issue url: ${{ github.event.workflow_run.actor }}"
+            echo  "Issue url: ${{ github.event.workflow_run.conclusion }}"
+            echo  "Issue url: ${{ github.event.workflow_run.event }}"
+            echo  "Issue url: ${{ github.event.workflow_run.head_commit.committer.name }}"
+            echo  "Issue url: ${{ github.event.workflow_run.head_commit.committer.username }}"
+            echo  "Issue url: ${{ github.event.workflow_run.message }}"
+            echo  "Issue url: ${{ github.event.workflow_run.head_sha }}"
+            echo  "Issue url: ${{ github.event.workflow_run.id }}"
+            echo  "Issue url: ${{ github.event.workflow_run.name }}"
+            echo  "Issue url: ${{ github.event.workflow_run.repository }}"
+            echo  "Issue url: ${{ github.event.workflow_run.display_title }}"            
+            echo  "Issue url: ${{ github.event.workflow_run.display_title }}"   
+            echo ${{ inputs.test }} 
