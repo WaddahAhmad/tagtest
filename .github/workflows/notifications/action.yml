@@ -15,7 +15,8 @@ inputs:
     required: false
   app_name:
     required: false
-
+  CHANNEL:
+    required: true
 runs:
   using: "composite"
   steps:
@@ -23,7 +24,7 @@ runs:
       if: ${{inputs.test == 'Success' }}
       shell: bash 
       run: |
-        curl --location --request POST '${{ secrets.CHANNEL }}' \
+        curl --location --request POST '${{ inputs.CHANNEL }}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
           "header": {
