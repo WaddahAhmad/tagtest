@@ -68,7 +68,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: Create version
-        run: gitg tag ${{needs.bump_tag.outputs.final_tag}}
+        run: git tag ${{needs.bump_tag.outputs.final_tag}}
       - name: Commit report
         run: |
           git config --global user.name 'waddah'
@@ -85,3 +85,34 @@ jobs:
             echo "One or more jobs in this workflow have failed."
             exit 1
           fi
+
+  send_notification:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+      - name: run workflow1
+        if: ${{ github.jobs.check_status.result == 'success' }}
+        uses: ./.github/workflows/notifications
+        with:
+          old_version: ${{ needs.extract_tag.outputs.old_tag }}
+          version: ${{needs.bump_tag.outputs.final_tag}}
+          commit_hash: $(echo ${GITHUB_SHA} | cut -c1-7)
+          repository: ${{ github.repository }}
+          sender: ${{ github.event.workflow_dispatch.sender }}
+          status: "Success"
+          app_name: ${{ inputs.upgrade_level }}
+
+      - name: run workflow2
+        if: ${{ github.jobs.check_status.result != 'success' }}
+        uses: ./.github/workflows/notifications
+        with:
+          old_version: ${{ needs.extract_tag.outputs.old_tag }}
+          version: ${{needs.bump_tag.outputs.final_tag}}
+          commit_hash: $(echo ${GITHUB_SHA} | cut -c1-7)
+          repository: ${{ github.repository }}
+          sender: ${{ github.event.workflow_dispatch.sender }}
+          status: "Success"
+          app_name: ${{ inputs.upgrade_level }}
