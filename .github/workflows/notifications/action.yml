@@ -1,32 +1,21 @@
 name: Deploy Staging
-on:
-  workflow_dispatch:
-    inputs:
-      test:
-        type: string
-        required: false
-        description: kind of update
-        default: that
-        options: 
-        - this
-        - here
-        - that
 
-jobs:
-  deploy-dev:
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        shell: bash
-    timeout-minutes: 30
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-tags: 'true'
-          fetch-depth: '0'
-      - name: test      
-        run: |
-            echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)"
-            echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))"
-            echo ${{ inputs.test }}  
+inputs:
+  test:
+    required: false
+
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-tags: 'true'
+        fetch-depth: '0'
+    - name: test      
+      run: |
+          echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)"
+          echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))"
+          echo ${{ inputs.test }}  
