@@ -12,7 +12,6 @@ on:
         - major
 
 jobs:
-
   extract_tag:
     runs-on: ubuntu-latest
     outputs:
@@ -74,3 +73,15 @@ jobs:
           git config --global user.name 'waddah'
           git config --global user.email 'waddah.t.ahmad@gmail.com'
           git push origin ${{needs.bump_tag.outputs.final_tag}}
+          
+  trig:
+    runs-on: ubuntu-latest
+    needs: bump_tag
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+      - name: run workflow
+        uses: ./.github/actions/test.yml
+        with:
+          test: "this"
