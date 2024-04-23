@@ -68,7 +68,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: Create version
-        run: git tag ${{needs.bump_tag.outputs.final_tag}}
+        run: gitg tag ${{needs.bump_tag.outputs.final_tag}}
       - name: Commit report
         run: |
           git config --global user.name 'waddah'
