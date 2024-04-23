@@ -1,13 +1,16 @@
 name: Deploy Staging
-
 on:
-  workflow_run:
-    workflows: ["Bump version"]
-    branches: [main]
-    types: 
-      - completed
-
-
+  workflow_dispatch:
+    inputs:
+      test:
+        type: string
+        required: false
+        description: kind of update
+        default: that
+        options: 
+        - this
+        - here
+        - that
 
 jobs:
   deploy-dev:
@@ -37,3 +40,5 @@ jobs:
             echo  "Issue url: ${{ github.event.workflow_run.name }}"
             echo  "Issue url: ${{ github.event.workflow_run.repository }}"
             echo  "Issue url: ${{ github.event.workflow_run.display_title }}"            
+            echo  "Issue url: ${{ github.event.workflow_run.display_title }}"   
+            echo ${{ inputs.test }} 
