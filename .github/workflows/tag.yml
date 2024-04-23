@@ -88,25 +88,17 @@ jobs:
 
   send_notification:
     runs-on: ubuntu-latest
-
+    needs: [bump_tag,push_tag_name,extract_tag]
+    if: always() && !cancelled() && !contains(needs.*.result, 'failure')
     steps:
+
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-      - name: run workflow1
-        if: ${{ github.jobs.check_status.result == 'success' }}
-        uses: ./.github/workflows/notifications
-        with:
-          old_version: ${{ needs.extract_tag.outputs.old_tag }}
-          version: ${{needs.bump_tag.outputs.final_tag}}
-          commit_hash: $(echo ${GITHUB_SHA} | cut -c1-7)
-          repository: ${{ github.repository }}
-          sender: ${{ github.event.workflow_dispatch.sender }}
-          status: "Success"
-          app_name: ${{ inputs.upgrade_level }}
 
       - name: run workflow2
-        if: ${{ github.jobs.check_status.result != 'success' }}
+        
+       
         uses: ./.github/workflows/notifications
         with:
           old_version: ${{ needs.extract_tag.outputs.old_tag }}
