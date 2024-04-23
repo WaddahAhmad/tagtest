@@ -10,7 +10,8 @@ on:
         - patch
         - minor
         - major
-
+env:
+  CHANNEL: ${{ secrets.CHANNEL }} 
 jobs:
 
   extract_tag:
@@ -105,6 +106,7 @@ jobs:
           sender: ${{ github.event.workflow_dispatch.sender }}
           status: "Success"
           app_name: ${{ inputs.upgrade_level }}
+          CHANNEL: ${{env.CHANNEL}}
 
       - name: run workflow2
         if: ${{ github.jobs.check_status.result != 'success' }}
@@ -117,3 +119,4 @@ jobs:
           sender: ${{ github.event.workflow_dispatch.sender }}
           status: "fail"
           app_name: ${{ inputs.upgrade_level }}
+          CHANNEL: ${{env.CHANNEL}}
