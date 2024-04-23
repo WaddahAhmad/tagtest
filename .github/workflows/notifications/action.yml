@@ -18,16 +18,109 @@ inputs:
 
 runs:
   using: "composite"
-
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-tags: 'true'
-        fetch-depth: '0'
-    - name: test     
+    - name: test    
+      if: ${{inputs.test == 'Success' }}
       shell: bash 
       run: |
-          echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)"
-          echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))"
-          echo ${{ inputs.old_version }}  
+      curl --location --request POST '${{ secrets.CHANNEL }}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "header": {
+          "title": "Card Title",
+          "subtitle": "Card Subtitle",
+          "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+          "imageType": "CIRCLE"
+        },
+        "sections": [
+          {
+            "header": "Section Header",
+            "collapsible": true,
+            "uncollapsibleWidgetsCount": 1,
+            "widgets": [
+              {
+                "textParagraph": {
+                  "text": "upgrading version: ${{inputs.version}} to ${{inputs.old_version}} from commit: #${{inputs.commit_hash}} for app: ${{inputs.app_name}} with status: ${{inputs.status}} repo: ${{inputs.repository}} triggerd by ${{inputs.sender}} "
+                }
+              }
+            ]
+          }
+        ],
+        "fixedFooter": {
+          "primaryButton": {
+            "text": "Primary Button",
+            "color": {
+              "red": 0,
+              "green": 0.5,
+              "blue": 1,
+              "alpha": 1
+            },
+            "onClick": {
+              "action": {
+                "function": "onClickPrimaryButton"
+              }
+            }
+          },
+          "secondaryButton": {
+            "text": "Secondary Button",
+            "onClick": {
+              "action": {
+                "function": "onClickSecondaryButton"
+              }
+            }
+          }
+        }
+      }'
+
+    - name: test    
+      if: ${{inputs.test == 'Fail' }}
+      shell: bash 
+      run: |
+      curl --location --request POST '${{ secrets.CHANNEL }}' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "header": {
+          "title": "Card Title",
+          "subtitle": "Card Subtitle",
+          "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+          "imageType": "CIRCLE"
+        },
+        "sections": [
+          {
+            "header": "Section Header",
+            "collapsible": true,
+            "uncollapsibleWidgetsCount": 1,
+            "widgets": [
+              {
+                "textParagraph": {
+                  "text": "upgrading version: ${{inputs.version}} to ${{inputs.old_version}} from commit: #${{inputs.commit_hash}} for app: ${{inputs.app_name}} with status: ${{inputs.status}} repo: ${{inputs.repository}} triggerd by ${{inputs.sender}} "
+                }
+              }
+            ]
+          }
+        ],
+        "fixedFooter": {
+          "primaryButton": {
+            "text": "Primary Button",
+            "color": {
+              "red": 0,
+              "green": 0.5,
+              "blue": 1,
+              "alpha": 1
+            },
+            "onClick": {
+              "action": {
+                "function": "onClickPrimaryButton"
+              }
+            }
+          },
+          "secondaryButton": {
+            "text": "Secondary Button",
+            "onClick": {
+              "action": {
+                "function": "onClickSecondaryButton"
+              }
+            }
+          }
+        }
+      }'
