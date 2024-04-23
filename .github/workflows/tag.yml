@@ -82,6 +82,6 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: run workflow
-        uses: ./.github/actions/test.yml
+        uses: ./.github/workflows/test.yml
         with:
           test: "this"
