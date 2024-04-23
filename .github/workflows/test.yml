@@ -18,10 +18,8 @@ jobs:
         shell: bash
     timeout-minutes: 30
     steps:
-      - name: test
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          script: |
+      - name: test      
+          run: |
             echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)"
             echo "old_tag=$(git describe --tags --always $(git rev-list --tags --max-count=1))"
             echo  "Issue url: ${{ github.event.workflow_run.actor }}"
