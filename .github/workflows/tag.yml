@@ -106,12 +106,19 @@ jobs:
           
       - name: Set outputs
         id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "previous_version=$(git describe --tags --always $(git rev-list --tags --max-count=2 | tail -n 1))" >> $GITHUB_OUTPUT
+          echo "current_version=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
+          
       - name: Check outputs
-        run: echo ${{ steps.vars.outputs.sha_short }}
+        run: |
+          echo ${{ steps.vars.outputs.sha_short }}
+          echo ${{ steps.vars.outputs.previous_version }}
+          echo ${{ steps.vars.outputs.current_version }}
+        
       - name: run workflow1
-        if: ${{ github.jobs.check_status.result == 'success' }}
+        if: needs.check_status.result == 'success'
         uses: ./.github/workflows/notifications
         with:
           old_version: ${{ needs.extract_tag.outputs.old_tag }}
@@ -124,7 +131,7 @@ jobs:
           CHANNEL: ${{env.CHANNEL}}
 
       - name: run workflow2
-        if: ${{ github.jobs.check_status.result != 'success' }}
+        if: needs.check_status.result != 'success'
         uses: ./.github/workflows/notifications
         with:
           old_version: ${{ needs.extract_tag.outputs.old_tag }}
