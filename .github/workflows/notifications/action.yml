@@ -17,7 +17,14 @@ inputs:
     required: false
   CHANNEL:
     required: true
-    
+  color: 
+    required: false
+  workflow: 
+    required: false
+  commiter: 
+    required: false
+
+
 runs:
   using: "composite"
   steps:
@@ -32,20 +39,20 @@ runs:
                 "cardId": "createCardMessage",
                 "card": {
                   "header": {
-                    "title": "Card Title",
-                    "subtitle": "Card Subtitle",
-                    "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+                    "title": "${{inputs.status}} Job",
+                    "subtitle": "${{inputs.workflow}}",
+                    "imageUrl": "https://www.silainsights.com/wp-content/uploads/2022/12/cropped-Sila-icon-RGB-primary-32x32.png",
                     "imageType": "CIRCLE"
                   },
                   "sections": [
                     {
-                      "header": "Section Header",
+                      "header": "<font color=\"#000000\"> Details. </font>",
                       "collapsible": true,
                       "uncollapsibleWidgetsCount": 1,
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "upgrading version: ${{inputs.version}} to ${{inputs.old_version}} from commit: #${{inputs.commit_hash}} for app: ${{inputs.app_name}} with status: ${{inputs.status}} repo: ${{inputs.repository}} triggerd by ${{inputs.sender}} "
+                            "text": "${{inputs.workflow}}: <b>${{inputs.old_version}}</b> to <b>${{inputs.version}}</b> <br> Commit: <i>#${{inputs.commit_hash}}</i> by <i>#${{inputs.commiter}}</i> <br> app: ${{inputs.app_name}}  <br> Status: <font color=\"#${{inputs.color}}\"> ${{inputs.status}} </font>. <br>  repo: ${{inputs.repository}}  <br>  triggerd by <u>${{inputs.sender}}</u> "
                           }
                         }
                       ]
@@ -61,16 +68,8 @@ runs:
                         "alpha": 1
                       },
                       "onClick": {
-                        "action": {
-                          "function": "onClickPrimaryButton"
-                        }
-                      }
-                    },
-                    "secondaryButton": {
-                      "text": "Secondary Button",
-                      "onClick": {
-                        "action": {
-                          "function": "onClickSecondaryButton"
+                        "openLink": {
+                          "url": "https://github.com/${{inputs.repository}}/actions"
                         }
                       }
                     }
