@@ -98,9 +98,9 @@ jobs:
         with:
           old_version: ${{ needs.extract_tag.outputs.old_tag }}
           version: ${{needs.bump_tag.outputs.final_tag}}
-          commit_hash: $(echo ${GITHUB_SHA} | cut -c1-7)
+          commit_hash: ${{ github.sha[0:7] }}
           repository: ${{ github.repository }}
-          sender: ${{ github.event.workflow_dispatch.sender }}
+          sender: ${{ github.event.workflow_dispatch.sender.id }}-${{ github.event.workflow_dispatch.workflow }}
           status: "Success"
           app_name: ${{ inputs.upgrade_level }}
           CHANNEL: ${{env.CHANNEL}}
@@ -111,9 +111,9 @@ jobs:
         with:
           old_version: ${{ needs.extract_tag.outputs.old_tag }}
           version: ${{needs.bump_tag.outputs.final_tag}}
-          commit_hash: ${{ github.sha }} 
+          commit_hash: ${{ github.sha[0:7] }}
           repository: ${{ github.repository }}
-          sender: ${{ github.event.workflow_dispatch.sender }}
+          sender: ${{ github.event.workflow_dispatch.sender.id }}
           status: "Fail"
           app_name: ${{ inputs.upgrade_level }}
           CHANNEL: ${{env.CHANNEL}}
