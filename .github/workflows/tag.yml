@@ -94,9 +94,11 @@ jobs:
     needs: [bump_tag,push_tag_name,extract_tag,check_status]
     if: always()
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT }}
+          fetch-tags: 'true'
+          fetch-depth: '0'
+          
       - id: previous_version
         run: echo "previous_version=$(git describe --tags --always $(git rev-list --tags --max-count=2 | tail -n 1))" >> $GITHUB_OUTPUT       
       - id: sha_short
