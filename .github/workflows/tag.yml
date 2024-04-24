@@ -83,7 +83,18 @@ jobs:
       - name: Check Job Status
         run: |
           echo "Good"
-
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+    needs: [check_status]
+    steps:
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.PAT }}"
+          prerelease: false
+          files: |
+            *
+            
   send_notification:
     runs-on: ubuntu-latest
     needs: [bump_tag,push_tag_name,extract_tag,check_status]
