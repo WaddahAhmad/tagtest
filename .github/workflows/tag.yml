@@ -19,6 +19,11 @@ jobs:
     outputs:
       old_tag: ${{ steps.old_tag.outputs.old_tag }}
     steps:
+      - name: Show GitHub context   
+        env: 
+          GITHUB_CONTEXT: ${{ toJson(github) }}   
+        run: echo "$GITHUB_CONTEXT"
+        shell: bash
       - name: Checkout
         uses: actions/checkout@v4
         with:
