@@ -97,6 +97,10 @@ jobs:
             
   send_notification:
     runs-on: ubuntu-latest
+    outputs:
+      old_tag: ${{ steps.vars.outputs.previous_version }}
+      sha_short: ${{ steps.vars.outputs.sha_short }}
+      current_version: ${{ steps.vars.outputs.current_version }}
     needs: [bump_tag,push_tag_name,extract_tag,check_status]
     if: always()
     steps:
