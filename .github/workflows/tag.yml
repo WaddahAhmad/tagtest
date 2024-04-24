@@ -97,11 +97,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
-          
+      - id: previous_version
+        run: echo "previous_version=$(git describe --tags --always $(git rev-list --tags --max-count=2 | tail -n 1))" >> $GITHUB_OUTPUT       
       - id: sha_short
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      - id: previous_version
-        run: echo "previous_version=$(git describe --tags --always $(git rev-list --tags --max-count=2 | tail -n 1))" >> $GITHUB_OUTPUT
+
       - id: current_version
         run: echo "current_version=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
           
