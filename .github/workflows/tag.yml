@@ -69,7 +69,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
       - name: Create version
-        run: gfit tag ${{needs.bump_tag.outputs.final_tag}}
+        run: git tag ${{needs.bump_tag.outputs.final_tag}}
       - name: Commit report
         run: |
           git config --global user.name 'waddah'
