@@ -17,11 +17,11 @@ inputs:
     required: false
   CHANNEL:
     required: true
+    
 runs:
   using: "composite"
   steps:
     - name: test    
-      if: ${{inputs.test == 'Success' }}
       shell: bash 
       run: |
         curl -X POST \
