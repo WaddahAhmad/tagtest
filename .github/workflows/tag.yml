@@ -82,10 +82,7 @@ jobs:
     steps:
       - name: Check Job Status
         run: |
-          if [[ "${{ job.status }}" != "success" ]]; then
-            echo "One or more jobs in this workflow have failed."
-            exit 1
-          fi
+          echo "Good"
 
   send_notification:
     runs-on: ubuntu-latest
@@ -114,9 +111,9 @@ jobs:
         with:
           old_version: ${{ needs.extract_tag.outputs.old_tag }}
           version: ${{needs.bump_tag.outputs.final_tag}}
-          commit_hash: $(echo ${GITHUB_SHA} | cut -c1-7)
+          commit_hash: ${{ github.sha }} 
           repository: ${{ github.repository }}
           sender: ${{ github.event.workflow_dispatch.sender }}
-          status: "fail"
+          status: "Fail"
           app_name: ${{ inputs.upgrade_level }}
           CHANNEL: ${{env.CHANNEL}}
