@@ -19,11 +19,6 @@ jobs:
     outputs:
       old_tag: ${{ steps.old_tag.outputs.old_tag }}
     steps:
-      - name: Show GitHub context   
-        env: 
-          GITHUB_CONTEXT: ${{ toJson(github) }}   
-        run: echo "$GITHUB_CONTEXT"
-        shell: bash
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -112,7 +107,7 @@ jobs:
           version: ${{needs.bump_tag.outputs.final_tag}}
           commit_hash: ${{ steps.vars.outputs.sha_short }}
           repository: ${{ github.repository }}
-          sender: ${{ github.event.workflow_dispatch.sender.id }}-${{ github.event.workflow_dispatch.workflow }}
+          sender: ${{ github.triggering_actor }}
           status: "Success"
           app_name: ${{ inputs.upgrade_level }}
           CHANNEL: ${{env.CHANNEL}}
@@ -125,7 +120,7 @@ jobs:
           version: ${{needs.bump_tag.outputs.final_tag}}
           commit_hash: ${{ steps.vars.outputs.sha_short }}
           repository: ${{ github.repository }}
-          sender: ${{ github.event.workflow_dispatch.sender.id }}
+          sender: ${{ github.triggering_actor }}
           status: "Fail"
           app_name: ${{ inputs.upgrade_level }}
           CHANNEL: ${{env.CHANNEL}}
