@@ -124,3 +124,6 @@ jobs:
           status: "Fail"
           app_name: ${{ inputs.upgrade_level }}
           CHANNEL: ${{env.CHANNEL}}
+          workflow: ${{github.workflow}}
+          commiter: ${{github.actor}}
+          color: FF0000
