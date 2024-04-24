@@ -87,10 +87,6 @@ jobs:
             
   send_notification:
     runs-on: ubuntu-latest
-    outputs:
-      previous_version: ${{ steps.previous_version.outputs.previous_version }}
-      sha_short: ${{ steps.sha_short.outputs.sha_short }}
-      current_version: ${{ steps.current_version.outputs.current_version }}
     needs: [bump_tag,push_tag_name,extract_tag,check_status]
     if: always()
     steps:
@@ -100,12 +96,10 @@ jobs:
           fetch-depth: '0'
           
       - id: previous_version
-        run: echo "previous_version=$(git describe --tags --always $(git rev-list --tags --max-count=2 | tail -n 1))" >> $GITHUB_OUTPUT       
-      - id: sha_short
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-      - id: current_version
-        run: echo "current_version=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
+        run: |
+          echo "previous_version=$(git describe --tags --always $(git rev-list --tags --max-count=2 | tail -n 1))" >> $GITHUB_OUTPUT       
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "current_version=$(git describe --tags --always $(git rev-list --tags --max-count=1))" >> $GITHUB_OUTPUT
           
       - name: Check outputs
         run: |
@@ -118,8 +112,8 @@ jobs:
         uses: ./.github/workflows/notifications
         with:
           old_version: ${{ steps.previous_version.outputs.previous_version }}
-          version: ${{ steps.current_version.outputs.current_version }}
-          commit_hash: ${{ steps.sha_short.outputs.sha_short }}
+          version: ${{ steps.previous_version.outputs.current_version }}
+          commit_hash: ${{ steps.previous_version.outputs.sha_short }}
           repository: ${{ github.repository }}
           sender: ${{ github.triggering_actor }}
           status: "Success"
@@ -134,8 +128,8 @@ jobs:
         uses: ./.github/workflows/notifications
         with:
           old_version: ${{ steps.previous_version.outputs.previous_version }}
-          version: ${{ steps.current_version.outputs.current_version }}
-          commit_hash: ${{ steps.sha_short.outputs.sha_short }}
+          version: ${{ steps.previous_version.outputs.current_version }}
+          commit_hash: ${{ steps.previous_version.outputs.sha_short }}
           repository: ${{ github.repository }}
           sender: ${{ github.triggering_actor }}
           status: "Fail"
