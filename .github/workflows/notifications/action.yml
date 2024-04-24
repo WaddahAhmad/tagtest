@@ -24,6 +24,57 @@ runs:
       if: ${{inputs.test == 'Success' }}
       shell: bash 
       run: |
-        curl --location --request POST '${{ inputs.CHANNEL }}' \
-        --header 'Content-Type: application/json' \
-        --data-raw '{"text": "upgrading version: ${{inputs.version}} to ${{inputs.old_version}} from commit: #${{inputs.commit_hash}} for app: ${{inputs.app_name}} with status: ${{inputs.status}} repo: ${{inputs.repository}} triggerd by ${{inputs.sender}} "}'
+        curl -X POST \
+        '${{ inputs.CHANNEL }}' \
+          -H 'Content-Type: application/json' \
+          -d '{
+              "cardsV2": [{
+                "cardId": "createCardMessage",
+                "card": {
+                  "header": {
+                    "title": "Card Title",
+                    "subtitle": "Card Subtitle",
+                    "imageUrl": "https://developers.google.com/chat/images/quickstart-app-avatar.png",
+                    "imageType": "CIRCLE"
+                  },
+                  "sections": [
+                    {
+                      "header": "Section Header",
+                      "collapsible": true,
+                      "uncollapsibleWidgetsCount": 1,
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "upgrading version: ${{inputs.version}} to ${{inputs.old_version}} from commit: #${{inputs.commit_hash}} for app: ${{inputs.app_name}} with status: ${{inputs.status}} repo: ${{inputs.repository}} triggerd by ${{inputs.sender}} "
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "fixedFooter": {
+                    "primaryButton": {
+                      "text": "Primary Button",
+                      "color": {
+                        "red": 0,
+                        "green": 0.5,
+                        "blue": 1,
+                        "alpha": 1
+                      },
+                      "onClick": {
+                        "action": {
+                          "function": "onClickPrimaryButton"
+                        }
+                      }
+                    },
+                    "secondaryButton": {
+                      "text": "Secondary Button",
+                      "onClick": {
+                        "action": {
+                          "function": "onClickSecondaryButton"
+                        }
+                      }
+                    }
+                  }
+                }
+              }]
+            }'
