@@ -107,8 +107,8 @@ jobs:
           
       - name: Check outputs
         run: |
-          echo ${{ steps.sha_short.outputs.sha_short }}
           echo ${{ steps.previous_version.outputs.previous_version }}
+          echo ${{ steps.sha_short.outputs.sha_short }}
           echo ${{ steps.current_version.outputs.current_version }}
         
       - name: run workflow1
