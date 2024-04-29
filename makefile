@@ -16,6 +16,6 @@ bump_tag:
             echo "Invalid upgrade level specified." ; \
             exit 1 ; \
             ;; \
-    esac ; \
+    esac ; \ss
     incremented_tag="v$${incremented_version}" ; \
     echo "tag=$${incremented_tag}" >> "$$GITHUB_OUTPUT"
