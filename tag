@@ -10,7 +10,7 @@ on:
         - patch
         - minor
         - major
-
+.
 jobs:
 
   extract_tag:
