@@ -23,3 +23,5 @@ jobs:
             report
             automated pr
           draft: false
+          assignees: waddah-ahmad
+          reviewers: waddah-ahmad
