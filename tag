@@ -1,4 +1,4 @@
-name: Bump version
+rtname: Bump version
 on:
   workflow_dispatch:
     inputs:
@@ -13,7 +13,7 @@ on:
 
 jobs:
 
-  extract_tag:
+  extract_tag:4trw4twertewtretr
     runs-on: ubuntu-latest
     outputs:
       old_tag: ${{ steps.old_tag.outputs.old_tag }}
