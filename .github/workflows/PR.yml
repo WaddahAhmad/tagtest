@@ -1,7 +1,8 @@
 name: Update AUTHORS
 on:
-  workflow_dispatch:
-  
+ push:
+  branches:
+    - 'tes'
 jobs:
   updateAuthors:
     runs-on: ubuntu-latest
