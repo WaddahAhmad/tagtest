@@ -22,6 +22,4 @@ jobs:
           labels: |
             report
             automated pr
-          assignees: WaddahAhmad
-          reviewers: WaddahAhmad
           draft: false
