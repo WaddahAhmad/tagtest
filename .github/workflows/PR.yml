@@ -17,4 +17,10 @@ jobs:
           title: Update AUTHORS
           body: Credit new contributors by updating AUTHORS
           branch: main
-
+          labels: |
+            report
+            automated pr
+          assignees: WaddahAhmad
+          reviewers: WaddahAhmad
+          milestone: 1
+          draft: false
