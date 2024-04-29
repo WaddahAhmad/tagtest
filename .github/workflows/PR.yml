@@ -24,5 +24,4 @@ jobs:
             automated pr
           assignees: WaddahAhmad
           reviewers: WaddahAhmad
-          milestone: 1
           draft: false
